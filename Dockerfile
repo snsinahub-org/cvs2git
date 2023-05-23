@@ -15,8 +15,9 @@
 # to make an image for testing cvs2svn and to run those tests using
 # the image.
 
-FROM debian:jessie AS run
+FROM python:2 AS run
 
+RUN cat /etc/apt/sources.list
 RUN apt-get update && \
     apt-get install -y \
         python \
@@ -36,10 +37,3 @@ VOLUME ["/cvs"]
 # A volume for storing temporary files can be mounted here:
 VOLUME ["/tmp"]
 
-ENTRYPOINT ["cvs2svn"]
-
-FROM run AS test
-
-RUN ln -s /tmp cvs2svn-tmp
-
-ENTRYPOINT ["./run-tests.py"]
