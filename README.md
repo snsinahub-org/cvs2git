@@ -1,4 +1,7 @@
-# cvs2svn - CVS to Subversion Repository Converter
+# cvs2git - CVS to Git Repository Converter
+
+This repository is a fork :fork: of [cvs2svn](https://github.com/mhagger/cvs2svn) repository
+
 
 :warning: cvs2svn is now in maintenance mode and is not actively being
 developed. :warning:
