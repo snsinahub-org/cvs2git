@@ -26,12 +26,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Get token
-        id: get_token
-        uses: tibdex/github-app-token@v1
-        with:
-          private_key: ${{ secrets.RELEASE_PEM }}
-          app_id: ${{ secrets.RELEASE_ID }}
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2
@@ -51,7 +45,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: v1.0.0
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          secrets: |
-            GIT_AUTH_TOKEN=${{ steps.get_token.outputs.token }}
