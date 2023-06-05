@@ -3,7 +3,7 @@
 This repository is a fork of [cvs2svn](https://github.com/mhagger/cvs2svn) repository
 
 ## Pre-requisites
-You need to have followings installed on your computer
+You need to have followings installed/Copied in your computer
 * Docker
 * Git
 * Copy of CVS repository from server and `CVSROOT` folder mush be included.
