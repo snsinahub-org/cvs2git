@@ -2,20 +2,20 @@
 
 This repository is a fork of [cvs2svn](https://github.com/mhagger/cvs2svn) repository
 
-## Pre-requisites
+## Prerequisites
 You need to have followings installed/Copied in your computer
 * Docker
 * Git
-* Copy of CVS repository from server and `CVSROOT` folder mush be included.
+* Copy of CVS repository from server, please make sure `CVSROOT` folder is included.
 
 ## How to use
-This is a containerized tool to migrate a CVS repository to a Git repo. You can run `cvs2git` inside docker container. You can either pull image from ghcr.io, link provided below, or build image on your machine
+This is a containerized tool to migrate a CVS repository to a Git repo. You can run `cvs2git` inside a docker container. You can either pull image from ghcr.io, link provided below, or build image on your machine
 
 ### Pull image
 Simply run following command in your workstation
 `docker pull ghcr.io/snsinahub-org/cvs2git:latest`
 
-Optionally, you can rename image by running 
+Optionally, you can rename the image by running 
 `docker image tag ghcr.io/snsinahub-org/cvs2git:latest cvs2git:latest`
 This helps you to have a shorter image name.
 
@@ -27,11 +27,11 @@ This helps you to have a shorter image name.
 
 
 ### Starting Docker container
-We asume name of pulled or built image is cvs2git:latest
+We assume name of pulled or built image is cvs2git:latest
 * Syntax: `docker run -it -v <path-to-cvs-repo>:/cvs -v <path-for-migrated-git-repo>:/git cvs2git /bin/bash`
 * Example: `docker run -it -v /tmp/migrations/cvs:/cvs -v /tmp/migrations/git:/git cvs2git /bin/bash`
 
-By running above command, you get into docker container interactive shell.
+By running the above command, you get into the docker container interactive shell.
 
 ### Migrate CVS to Git
 - Syntax: `cvs2git --blobfile=/git/git-blob.dat --dumpfile=/git/git-dump.dat --username=<some-git-username> --fallback-encoding=ascii <path-to-cvs-repo-in-container> > cvs.log`
@@ -39,34 +39,34 @@ By running above command, you get into docker container interactive shell.
 
 ### All commands
 - Migration with History
-  - Use the included Dockerfile to access `cvs2git`
-  - Convert as mush history as possible
-    - [cvs2git](http://clusterfrak.com/devops/git/git_cvs2git/)
-  - Push to **GitHub**
+  - Use the included Dockerfile to access `cvs2git`
+  - Convert as mush history as possible
+    - [cvs2git](http://clusterfrak.com/devops/git/git_cvs2git/)
+  - Push to **GitHub**
 
 - Run the command to convert the CVS to Git
-  - `cd /cvs/<project>`
-  - `cvs2git --blobfile=/git/git-blob.dat --dumpfile=/git/git-dump.dat --username=<SomeUserName> --fallback-encoding=ascii <project> >> /tmp/cvs_migration/<project>.log`
+  - `cd /cvs/<project>`
+  - `cvs2git --blobfile=/git/git-blob.dat --dumpfile=/git/git-dump.dat --username=<SomeUserName> --fallback-encoding=ascii <project> >> /tmp/cvs_migration/<project>.log`
 - Once the command finishes, you should have a new git object ready to be created
 - `cd /git`
 - Create a new empty git repo
-  - `git init --bare <project>.git`
-  - example: `git init --bare cvsws.git`
+  - `git init --bare <project>.git`
+  - example: `git init --bare cvsws.git`
 - Change directory into new Git Repo
-  - `cd <project>.git`
+  - `cd <project>.git`
 - Import the git data to the repo
-  - `cat /git/git-blob.dat /git/git-dump.dat | git fast-import`
+  - `cat /git/git-blob.dat /git/git-dump.dat | git fast-import`
 - Cleanup the data
-  - `git gc --prune=now`
- 
+  - `git gc --prune=now`
+ 
 ## Prepare Git repo and push to GitHub
 You can either run following commands in docker container or exit from container and run from host computer.
 - Update the repo to point to the GitHub repo
-  - `git branch -M main`
-  - `git config --global user.email "<your-github-account-associated-email>"`
-  - `git config --global user.name "<Your GitHub username>"`
-  - `git config --global push.followTags true`
+  - `git branch -M main`
+  - `git config --global user.email "<your-github-account-associated-email>"`
+  - `git config --global user.name "<Your GitHub username>"`
+  - `git config --global push.followTags true`
 - Push the code to GitHub
-  - `git push -u origin main`
-  
+  - `git push -u origin main`
+  
 At this point you should have now pushed all data from the converted CVS repo into **GitHub**!
