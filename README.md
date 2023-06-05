@@ -34,27 +34,15 @@ We asume name of pulled or built image is cvs2git:latest
 By running above command, you get into docker container interactive shell.
 
 ### Migrate CVS to Git
-#### 
 - Syntax: `cvs2git --blobfile=/git/git-blob.dat --dumpfile=/git/git-dump.dat --username=<some-git-username> --fallback-encoding=ascii <path-to-cvs-repo-in-container> > cvs.log`
 - Example: `cvs2git --blobfile=/git/git-blob.dat --dumpfile=/git/git-dump.dat --username=cvs --fallback-encoding=ascii /cvs/cvsws > cvs.log`
 
-
-
-
-### Migration with history
+### All commands
 - Migration with History
   - Use the included Dockerfile to access `cvs2git`
   - Convert as mush history as possible
     - [cvs2git](http://clusterfrak.com/devops/git/git_cvs2git/)
   - Push to **GitHub**
-
-You will need access to the entire source code including the `CVSROOT`
-Example: /path/to/cvs
-
-```bash
-- `/path/to/cvs`
-  - inside should be the various projects and `CVSROOT`
-```
 
 - Run the command to convert the CVS to Git
   - `cd /cvs/<project>`
@@ -62,35 +50,23 @@ Example: /path/to/cvs
 - Once the command finishes, you should have a new git object ready to be created
 - `cd /git`
 - Create a new empty git repo
-  - `git init project`
+  - `git init --bare <project>.git`
+  - example: `git init --bare cvsws.git`
 - Change directory into new Git Repo
-  - `cd <project>`
+  - `cd <project>.git`
 - Import the git data to the repo
   - `cat /git/git-blob.dat /git/git-dump.dat | git fast-import`
 - Cleanup the data
   - `git gc --prune=now`
-- Add a `.gitignore` to remove CVS history files
-  - `echo "CVSROOT" >> .gitignore`
-- Add all data to the repo
-  - `git add .`
+ 
+## Prepare Git repo and push to GitHub
+You can either run following commands in docker container or exit from container and run from host computer.
 - Update the repo to point to the GitHub repo
-  - `git remote add origin http://github.com/<org>/<repo>.git`
-  - `git config --global user.email "<kdrogo@yourcompany.com>"`
-  - `git config --global user.name "<Khal Drogo>"`
+  - `git branch -M main`
+  - `git config --global user.email "<your-github-account-associated-email>"`
+  - `git config --global user.name "<Your GitHub username>"`
   - `git config --global push.followTags true`
-- Create commit message
-  - `git commit -m "Conversion from CVS to Git"`
 - Push the code to GitHub
-  - `git push origin master`
-  - `git push --all`
-  - `git push --tags`
-
+  - `git push -u origin main`
+  
 At this point you should have now pushed all data from the converted CVS repo into **GitHub**!
-
-## Docker Hub
-The **Docker** container that is built from this repository is located at `https://hub.docker.com/repository/docker/jwiebalk/cvs2git`
-
---------------------------------------------------------------------------------
-
-### License
-- [License](https://github.com/jwiebalk/docker-cvs2git/blob/master/LICENSE)
