@@ -9,7 +9,7 @@ You need to have followings installed/Copied in your computer
 * Copy of CVS repository from server, please make sure `CVSROOT` folder is included.
 
 ## How to use
-This is a containerized tool to migrate a CVS repository to a Git repo. You can run `cvs2git` inside a docker container. You can either pull image from ghcr.io, link provided below, or build image on your machine
+This is a containerized tool to migrate a CVS repository to a Git repo. You can run `cvs2git` inside a docker container. You can either pull image from ghcr.io, link provided below, or clone this repository and build image on your machine
 
 ### Pull image
 Simply run following command in your workstation
