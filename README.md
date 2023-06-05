@@ -2,38 +2,95 @@
 
 This repository is a fork :fork: of [cvs2svn](https://github.com/mhagger/cvs2svn) repository
 
+## Pre-requisites
+You need to have followings installed on your computer
+* Docker
+* Git
+* Copy of CVS repository from server and `CVSROOT` folder mush be included.
 
-:warning: cvs2svn is now in maintenance mode and is not actively being
-developed. :warning:
+## How to use
+This is a containerized tool to migrate a CVS repository to a Git repo. You can run `cvs2git` inside docker container. You can either pull image from ghcr.io, link provided below, or build image on your machine
 
-cvs2svn is a tool for migrating a CVS repository to Subversion, git,
-or Bazaar. The main design goals are robustness and 100% data
-preservation. cvs2svn can convert just about any CVS repository we've
-ever seen. For example, it has been used to convert gcc, FreeBSD, KDE,
-GNOME, PostgreSQL…
+### Pull image
+Simply run following command in your workstation
+`docker pull ghcr.io/snsinahub-org/cvs2git:latest`
 
-cvs2svn infers what happened in the history of your CVS repository and
-replicates that history as accurately as possible in the target SCM.
-All revisions, branches, tags, log messages, author names, and commit
-dates are converted. cvs2svn deduces what CVS modifications were made
-at the same time, and outputs these modifications grouped together as
-changesets in the target SCM. cvs2svn also deals with many CVS quirks
-and is highly configurable. See the comprehensive [feature
-list](features.md).
+Optionally, you can rename image by running 
+`docker image tag ghcr.io/snsinahub-org/cvs2git:latest cvs2git:latest`
+This helps you to have a shorter image name.
 
-You can get the latest releases [from the GitHub releases
-page](https://github.com/mhagger/cvs2svn/releases). Please read [the
-documentation](cvs2svn.md) and [the FAQ](faq.md) carefully before
-using cvs2svn.
 
-For general use, the most recent released version of cvs2svn is
-usually the best choice. However, if you want to use the newest
-cvs2svn features or if you're debugging or patching cvs2svn, you might
-want to use the master version (which is usually quite stable). To do
-so, use Git to clone the repository, and run it straight from the
-working copy.
+### Build image
 
-This repository contains a `Dockerfile` that can be used to create a
-docker image in which cvs2svn can be run. (It has some dependencies
-that are no longer easily installable, so this is probably the easiest
-way to run cvs2svn.)
+* `docker build --network host -t cvs2git .`
+* `docker run -it -v /path/to/project:/cvs -v /path/to/wanted/git/repo:/git -v /path/to/log/output:/tmp/cvs_migration cvs2git`
+
+
+### Starting Docker container
+We asume name of pulled or built image is cvs2git:latest
+* Syntax: `docker run -it -v <path-to-cvs-repo>:/cvs -v <path-for-migrated-git-repo>:/git cvs2git /bin/bash`
+* Example: `docker run -it -v /tmp/migrations/cvs:/cvs -v /tmp/migrations/git:/git cvs2git /bin/bash`
+
+By running above command, you get into docker container interactive shell.
+
+### Migrate CVS to Git
+#### 
+- Syntax: `cvs2git --blobfile=/git/git-blob.dat --dumpfile=/git/git-dump.dat --username=<some-git-username> --fallback-encoding=ascii <path-to-cvs-repo-in-container> > cvs.log`
+- Example: `cvs2git --blobfile=/git/git-blob.dat --dumpfile=/git/git-dump.dat --username=cvs --fallback-encoding=ascii /cvs/cvsws > cvs.log`
+
+
+
+
+### Migration with history
+- Migration with History
+  - Use the included Dockerfile to access `cvs2git`
+  - Convert as mush history as possible
+    - [cvs2git](http://clusterfrak.com/devops/git/git_cvs2git/)
+  - Push to **GitHub**
+
+You will need access to the entire source code including the `CVSROOT`
+Example: /path/to/cvs
+
+```bash
+- `/path/to/cvs`
+  - inside should be the various projects and `CVSROOT`
+```
+
+- Run the command to convert the CVS to Git
+  - `cd /cvs/<project>`
+  - `cvs2git --blobfile=/git/git-blob.dat --dumpfile=/git/git-dump.dat --username=<SomeUserName> --fallback-encoding=ascii <project> >> /tmp/cvs_migration/<project>.log`
+- Once the command finishes, you should have a new git object ready to be created
+- `cd /git`
+- Create a new empty git repo
+  - `git init project`
+- Change directory into new Git Repo
+  - `cd <project>`
+- Import the git data to the repo
+  - `cat /git/git-blob.dat /git/git-dump.dat | git fast-import`
+- Cleanup the data
+  - `git gc --prune=now`
+- Add a `.gitignore` to remove CVS history files
+  - `echo "CVSROOT" >> .gitignore`
+- Add all data to the repo
+  - `git add .`
+- Update the repo to point to the GitHub repo
+  - `git remote add origin http://github.com/<org>/<repo>.git`
+  - `git config --global user.email "<kdrogo@yourcompany.com>"`
+  - `git config --global user.name "<Khal Drogo>"`
+  - `git config --global push.followTags true`
+- Create commit message
+  - `git commit -m "Conversion from CVS to Git"`
+- Push the code to GitHub
+  - `git push origin master`
+  - `git push --all`
+  - `git push --tags`
+
+At this point you should have now pushed all data from the converted CVS repo into **GitHub**!
+
+## Docker Hub
+The **Docker** container that is built from this repository is located at `https://hub.docker.com/repository/docker/jwiebalk/cvs2git`
+
+--------------------------------------------------------------------------------
+
+### License
+- [License](https://github.com/jwiebalk/docker-cvs2git/blob/master/LICENSE)
