@@ -26,32 +26,31 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Get token
-        id: get_token
-        uses: tibdex/github-app-token@v1
         with:
-          private_key: ${{ secrets.RELEASE_PEM }}
-          app_id: ${{ secrets.RELEASE_ID }}
+          token: ${{ secrets.MY_PAT }}
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.MY_PAT }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          tags: v1.0.0
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           secrets: |
-            GIT_AUTH_TOKEN=${{ steps.get_token.outputs.token }}
+            GIT_AUTH_TOKEN=${{ secrets.MY_PAT }}
+          
