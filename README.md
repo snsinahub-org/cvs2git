@@ -1,6 +1,6 @@
 # cvs2git - CVS to Git Repository Converter
 
-This repository is a fork :fork: of [cvs2svn](https://github.com/mhagger/cvs2svn) repository
+This repository is a fork of [cvs2svn](https://github.com/mhagger/cvs2svn) repository
 
 ## Pre-requisites
 You need to have followings installed on your computer
