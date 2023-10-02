@@ -36,6 +36,7 @@ By running the above command, you get into the docker container interactive shel
 ### Migrate CVS to Git
 - Syntax: `cvs2git --blobfile=/git/git-blob.dat --dumpfile=/git/git-dump.dat --username=<some-git-username> --fallback-encoding=ascii <path-to-cvs-repo-in-container> > cvs.log`
 - Example: `cvs2git --blobfile=/git/git-blob.dat --dumpfile=/git/git-dump.dat --username=cvs --fallback-encoding=ascii /cvs/cvsws > cvs.log`
+- Example with options: `cvs2git --blobfile=/git/git-blob.dat --dumpfile=/git/git-dump.dat --username=cvs --fallback-encoding=ascii /cvs/cvsws --options=cvs2git.options > cvs.log`
 
 ### All commands
 - Migration with History
