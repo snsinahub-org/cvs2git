@@ -24,7 +24,8 @@ RUN apt-get update && \
         python-bsddb3 \
         subversion \
         rcs \
-        cvs
+        cvs \
+        vim
 
 RUN mkdir /src
 WORKDIR /src
